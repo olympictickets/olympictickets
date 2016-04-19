@@ -1,15 +1,40 @@
 // ==UserScript==
-// @name       Olympic Tickets
-// @namespace  https://ingressos.rio2016.com
-// @version    1
-// @description  Ajuda a comprar ingressos
-// @match      https://ingressos.rio2016.com/rio2016.html*
-// @author     Olympic Tickets
-// @grant GM_xmlhttpRequest
+// @name       Portal pacemaker
+// @namespace  http://www.tecnotrends.com.br
+// @version    0.12
+// @description  Impede interrupções desnecessárias no uso do Portal, renovando a sessão e fazendo login automaticamente (se a senha estiver salva).
+// @match      http://www.tecnotrends.com.br/*
+// @author     Ygor Mutti
+// @grant none
 // ==/UserScript==
 
-var segundos = 2;
-
-$(function() {
-	alert(segundos);
-});
+if (document.location.pathname.toLowerCase().endsWith('sessaoexpirou.aspx'))
+  document.location = './Acesso.aspx';
+else if (document.location.pathname.toLowerCase().endsWith('acesso.aspx'))
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var inputs = document.getElementsByTagName('input');
+      var filled = true;
+      var button;
+      
+      for (var i = 0; i < inputs.length; i++) {
+        var e = inputs[i];
+        
+        if (e.type === 'submit')
+          button = e;
+        if ((e.type === 'text' || e.type === 'password') && e.value === '')
+          filled = false;
+      }
+      
+      if (filled) {
+        button.focus();
+        button.style.outline = '2px solid green'
+        button.click();
+      }
+    }, 2 * 1000);
+  });
+else {
+  setInterval(function () {
+    $('.aRenewSession').click();
+  }, 25 * 60 * 1000);
+}
